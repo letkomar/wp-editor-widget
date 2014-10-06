@@ -45,10 +45,11 @@ class WP_Editor_Widget extends WP_Widget {
 		extract( $args );
 
 		$title			= apply_filters( 'wp_editor_widget_title', $instance['title'] );
+		$class		= apply_filters( 'wp_editor_widget_title', $instance['class'] );
 		$output_title	= apply_filters( 'wp_editor_widget_output_title', $instance['output_title'] );
 		$content		= apply_filters( 'wp_editor_widget_content', $instance['content'] );
 
-		echo $before_widget;
+		echo str_replace('class="', 'class="'.$class.' ', $before_widget);
 
 		if ( $output_title == "1" && !empty($title) ) {
 			echo $before_title . $title . $after_title;
@@ -76,6 +77,13 @@ class WP_Editor_Widget extends WP_Widget {
 			$title = __( 'New title', 'wp-editor-widget' );
 		}
 
+		if ( isset($instance['class']) ) {
+			$class = $instance['class'];
+		}
+		else {
+			$class = '';
+		}
+
 		if ( isset($instance['content']) ) {
 			$content = $instance['content'];
 		}
@@ -92,6 +100,10 @@ class WP_Editor_Widget extends WP_Widget {
 		</p>
 		<p>
 			<a href="javascript:WPEditorWidget.showEditor('<?php echo $this->get_field_id( 'content' ); ?>');" class="button"><?php _e( 'Edit content', 'wp-editor-widget' ) ?></a>
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('class'); ?>"><?php _e( 'Custom class', 'wp-editor-widget' ); ?>:</label>
+			<input class="widefat" type="text" id="<?php echo $this->get_field_id('class'); ?>" name="<?php echo $this->get_field_name('class'); ?>" value="<?php echo esc_attr($class); ?>">
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('output_title'); ?>">
@@ -118,6 +130,7 @@ class WP_Editor_Widget extends WP_Widget {
 
 		$instance['title']			= ( !empty($new_instance['title']) ? strip_tags( $new_instance['title']) : '' );
 		$instance['content']		= ( !empty($new_instance['content']) ? $new_instance['content'] : '' );
+		$instance['class']		= ( !empty($new_instance['class']) ? $new_instance['class'] : '' );
 		$instance['output_title']	= ( isset($new_instance['output_title']) && $new_instance['output_title'] == "1" ? 1 : 0 );
 
 		do_action( 'wp_editor_widget_update', $new_instance, $instance );
